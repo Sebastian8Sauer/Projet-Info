@@ -33,19 +33,26 @@ fun{IsNote PartItem}
    end
 end  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% TEST TEST
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 declare 
 ExtN1 = silence(duration:0.0)   % ou la version note()
 ExtN2 = note(name:d octave:8 sharp:true duration:5.0 instrument:none)
 
 {Browse {IsExtendedNote ExtN1}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 declare
 ExtC = [ExtN1 ExtN2]
 
 {Browse {IsExtendedChord ExtC}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+declare N1 N2 N3 N4 in
+N1 = a
+N2 = d2
+N3 = c#6
+N4 = silence
 
+{Browse {IsNote N1}}
 
 
 
