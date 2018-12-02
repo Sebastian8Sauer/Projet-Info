@@ -22,7 +22,7 @@ fun{IsExtendedChord PartItem}
    end
 end     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-declare
+declare                                FAUXXXXXXXXXXXXXXXX
 fun{IsNote PartItem}
 
    case PartItem of Name#Octave
