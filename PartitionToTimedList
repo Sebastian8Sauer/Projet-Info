@@ -44,7 +44,7 @@ declare
 fun{IsExtendedNote PartItem}
    case PartItem of note(name:V octave:W sharp:X duration:Y instrument:Z)
    then true
-   []silence(duration:X)
+   []silence(duration:0.0)
    then true
    else false
    end
