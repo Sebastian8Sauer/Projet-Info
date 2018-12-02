@@ -68,6 +68,8 @@ fun{IsNote PartItem}
 
    case PartItem of Name#Octave
    then true
+   []silence
+   then true
    []Atom 
    then 
       case {AtomToString PartItem} of [_]
