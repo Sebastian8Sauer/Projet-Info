@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% This is a test version of FlatPartition without the transformations
+% This is a test version of FlatPartition without the transformations    OK REUSSI
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -29,3 +29,15 @@ fun {FlatPartition Partition}
    
    end
 end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% TEST TEST
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+declare
+Part = [a b2 c#3 [f5 f6 f7] silence note(name:c octave:6 sharp:true duration:2.0 instrument:none)]
+
+declare
+FlatPart = {FlatPartition Part}
+
+{Browse FlatPart}
