@@ -22,21 +22,23 @@ fun{IsExtendedChord PartItem}
    end
 end     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-declare                                FAUXXXXXXXXXXXXXXXX
+
+declare
 fun{IsNote PartItem}
 
    case PartItem of Name#Octave
    then true
-   []Atom 
-   then true
-   else false
+   else {IsAtom PartItem}
    end
-end  
+   
+end 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TEST TEST
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 declare 
 ExtN1 = silence(duration:0.0)   % ou la version note()
+declare
 ExtN2 = note(name:d octave:8 sharp:true duration:5.0 instrument:none)
 
 {Browse {IsExtendedNote ExtN1}}
