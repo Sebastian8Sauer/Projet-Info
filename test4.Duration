@@ -32,12 +32,12 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 declare
-fun{DurationChangeChord Chord NewTime}
+fun{DurationChangeChord Chord NewTimeFactor}
 
    case Chord of H|T
    then
       case H of note(name:N octave:O sharp:S duration:D instrument:I)
-      then note(name:N octave:O sharp:S duration:NewTime instrument:I)|{DurationChangeChord T NewTime}
+      then note(name:N octave:O sharp:S duration:(NewTimeFactor*D) instrument:I)|{DurationChangeChord T NewTime}
       []silence(duration:0.0)
       then silence(duration:0.0)|{DurationChangeChord T NewTime}
       end
