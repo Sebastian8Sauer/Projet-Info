@@ -3,6 +3,7 @@
 % PARTIE 1
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% extend un note
 
 declare
 fun {NoteToExtended Note}
@@ -36,7 +37,7 @@ fun {ChordToExtended Chord}
 end
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PARTIE 2 : check quel type est <partition item>
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,8 +93,9 @@ fun{IsTransformation PartItem}
 end
      
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% PARTIE 3 
+% PARTIE 3 : duration
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % La partition doit etre FLAT
@@ -132,34 +134,61 @@ end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 declare
 fun{DurationChange NewTime Part}
    local FlatPart in                        % Toutes les transformations doivent renvoyer une <flat partition>
-      FlatPart = {FlatPartition Part}      
-
+      FlatPart = {FlatPartition Part}
       local Time in                            % duree de la partition
-	 Time = {Duration FlatPart}        
-	 
+	 Time = {Duration FlatPart}
 	 local NewTimeF in                      % facteur par lequel il faut multiplier tout duration
-	    NewTimeF = (NewTime div Time)
+	    NewTimeF = (NewTime/Time)
 
-	 local fun{DurationChange1 NewTimeF FlatPart}
-		  case FlatPart of H|T
-		  then 
-		     case H of note(name:N octave:O sharp:S duration:D instrument:I)
-		     then note(name:N octave:O sharp:S duration:((NewTimeF*D) instrument:I)|{DurationChange1 NewTimeF T}
-		     else {DurationChangeChord H NewTimeF}|{DurationChange1 NewTimeF T}
+	    local fun{DurationChange1 NewTimeF FlatPart}
+		     case FlatPart of H|T
+		     then
+			case H of note(name:N octave:O sharp:S duration:D instrument:I)
+			then note(name:N octave:O sharp:S duration:(NewTimeF*D) instrument:I)|{DurationChange1 NewTimeF T}
+			[]silence(duration:0.0)
+			then silence(duration:0.0)|{DurationChange1 NewTimeF T}
+			else {DurationChangeChord H NewTimeF}|{DurationChange1 NewTimeF T}
+			end
+		     else nil
 		     end
-
-		  else nil
 		  end
-	       end
-	 in
-	    {DurationChange1 NewTimeF FlatPart}
+	    in
+	       {DurationChange1 NewTimeF FlatPart}
+	    end
 	 end
       end
    end
 end
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
@@ -196,11 +225,6 @@ fun {FlatPartition Partition}
 end
 
      
-   
-   
-   
-   
-   
    
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
