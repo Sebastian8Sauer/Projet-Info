@@ -4,7 +4,7 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 1. Duration renvoye la durée d'une flatpartition
+% 1. Duration renvoye la durée d'une flatpartition    OKKKK MAIS PARFOIS UNEXPECTED ERROR
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % La partition doit etre FLAT
 
@@ -43,6 +43,12 @@ fun{DurationChangeChord Chord NewTime Time}
    end
 end
 
+% TEST
+declare
+L = [note(name:a octave:7 sharp:false duration:1.0 instrument:none) note(name:b octave:2 sharp:false duration:2.0 instrument:none) note(name:a octave:5 sharp:true duration:5.0 instrument:none)]
+declare
+NewChord = {DurationChangeChord L 4.0 2.0}
+{Browse NewChord}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % TEST de la fonction principale DurationChange
