@@ -1,0 +1,50 @@
+
+fun{Transpose X ExtNote}
+
+on veut transposer un extended note de plusieurs semi-tons
+
+on va associer chaque note a un chiffre
+L = [c c# d d# e f f# g g# a a# b]
+devient
+L = [1 2 3 4 5 6 7 8 9 10 11 12]
+
+de cette facon on sait facilement utiliser le nombre donne en argument: X
+
+1. on créé une fonction qui convertit une note --> chiffre
+2. l'inverse donc un chiffre --> note
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+1. 
+
+declare
+fun{NoteToInt N}
+   case N.name of c then
+      if N.sharp then 2
+      else 1
+      end
+   []d then
+      if N.sharp
+      then 4
+      else 3
+      end
+   []e then 5
+   []f then
+      if N.sharp
+      then 7
+      else 6
+      end
+   []g then
+      if N.sharp
+      then 9
+      else 8
+      end
+   []a then
+      if N.sharp
+      then 11
+      else 10
+      end
+   else 12
+   end
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+     
