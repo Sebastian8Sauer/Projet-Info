@@ -45,18 +45,27 @@ fun{NoteToInt N}
    else 12
    end
 end
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+1. il existe une autre maniere avec moins de code mais plus de travail pour l ordinateur
+declare
+fun{NoteToInt N}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 2.
 declare
 fun{IntToNote I}
 
-local L in
-L = [c c#4 d d#4 e f f#4 g g#4 a a#4 b]
-local ChordNote
-in ChordNote = {ChordToExtended L}
+   local L in
+   L = [c c#4 d d#4 e f f#4 g g#4 a a#4 b]
+      local ChordNote
+      in ChordNote = {ChordToExtended L}
 
-{}
+      {Nth ChordNote I}
+
+      end
+   end
+end
+
 
 
 
