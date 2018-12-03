@@ -42,6 +42,8 @@ end
 % PARTIE 2 : check quel type est <partition item>
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% check if <partition item> is a extended note
+
 declare
 fun{IsExtendedNote PartItem}
    case PartItem of note(name:V octave:W sharp:X duration:Y instrument:Z)
@@ -54,6 +56,8 @@ end
      
      
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
+% check if <partition item> is a extended chord
+
 declare
 fun{IsExtendedChord PartItem}
 
@@ -66,6 +70,8 @@ end
      
      
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% check if <partition item> is a note
+
 declare
 fun{IsNote PartItem}
 
@@ -78,6 +84,7 @@ end
    
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% INUTILE normalement
 declare
 fun{IsTransformation PartItem}
 
@@ -92,7 +99,6 @@ fun{IsTransformation PartItem}
    else false
    end
 end
-     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
