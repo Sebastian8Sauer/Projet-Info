@@ -108,7 +108,6 @@ fun{Duration FlatPart}
 	       else {Duration1 T (Acc + H.duration)}
 	       end
 	    []nil then Acc
-	    else false
 	    end
 	 end
    in
