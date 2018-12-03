@@ -23,6 +23,8 @@ fun {FlatPartition Partition}
 
       else error|{FlatPartition T}
       
+      end
+      
    []nil then nil
    
    end
