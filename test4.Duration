@@ -1,1 +1,76 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Plusieurs tests des sous-fonctions de DurationChange
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 1. Duration renvoye la durée d'une flatpartition
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% La partition doit etre FLAT
+
+declare
+fun{Duration FlatPart}
+   local fun{Duration1 FlatPart Acc}
+	    case FlatPart of H|T
+	    then
+	       case H of A|B
+	       then {Duration1 T (Acc + A.duration)}
+	       else {Duration1 T (Acc + H.duration)}
+	       end
+	    []nil then Acc
+	    else false
+	    end
+	 end
+   in
+      {Duration1 FlatPart 0.0}
+   end
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 2. DurationChangeChord change la duration d'un extended chord 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+declare
+fun{DurationChangeChord Chord NewTime Time}
+
+   case Chord of H|T
+   then
+      case H of note(name:N octave:O sharp:S duration:D instrument:I)
+      then note(name:N octave:O sharp:S duration:((NewTime div Time)*D) instrument:I)|{DurationChangeChord T NewTime Time}
+      end
+   else nil
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% TEST de la fonction principale DurationChange
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+declare
+fun{DurationChange NewTime Part}
+   local FlatPart in                        % Toutes les transformations doivent renvoyer une <flat partition>
+      FlatPart = {FlatPartition Part}      
+
+      local Time in
+	 Time = {Duration FlatPart}
+
+	 local fun{DurationChange1 NewTime Time FlatPart}
+		  case FlatPart of H|T
+		  then 
+		     case H of note(name:N octave:O sharp:S duration:D instrument:I)
+		     then note(name:N octave:O sharp:S duration:((NewTime div Time)*D) instrument:I)|{DurationChange1 NewTime Time T}
+		     else {DurationChangeChord H NewTime Time}|{DurationChange1 NewTime Time T}
+		     end
+
+		  else nil
+		  end
+	       end
+	 in
+	    {DurationChange1 NewTime Time FlatPart}
+	 end
+      end
+   end
+end
 
