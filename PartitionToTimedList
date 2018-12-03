@@ -122,9 +122,9 @@ fun{DurationChangeChord Chord NewTimeFactor}
    case Chord of H|T
    then
       case H of note(name:N octave:O sharp:S duration:D instrument:I)
-      then note(name:N octave:O sharp:S duration:(NewTimeFactor*D) instrument:I)|{DurationChangeChord T NewTime}
+      then note(name:N octave:O sharp:S duration:(NewTimeFactor*D) instrument:I)|{DurationChangeChord T NewTimeFactor}
       []silence(duration:0.0)
-      then silence(duration:0.0)|{DurationChangeChord T NewTime}
+      then silence(duration:0.0)|{DurationChangeChord T NewTimeFactor}
       end
    []nil then nil
    end
