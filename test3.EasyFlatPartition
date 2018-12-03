@@ -1,23 +1,8 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% This is a test version of FlatPartition without the transformations
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 declare
 fun {FlatPartition Partition}
@@ -36,13 +21,9 @@ fun {FlatPartition Partition}
       elseif {IsExtendedNote H}
       then H|{FlatPartition T}
 
-      else
-	 case H of duration(seconds:X Part)
-	 then {DurationChange X Part}|{FlatPartition T}
-	 else false
-	 end
-      end
+      else error|{FlatPartition T}
+      
    []nil then nil
-   else false
+   
    end
 end
