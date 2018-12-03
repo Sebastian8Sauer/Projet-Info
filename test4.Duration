@@ -36,15 +36,15 @@ fun{DurationChangeChord Chord NewTimeFactor}
    case Chord of H|T
    then
       case H of note(name:N octave:O sharp:S duration:D instrument:I)
-      then note(name:N octave:O sharp:S duration:(NewTimeFactor*D) instrument:I)|{DurationChangeChord T NewTime}
+      then note(name:N octave:O sharp:S duration:(NewTimeFactor*D) instrument:I)|{DurationChangeChord T NewTimeFactor}
       []silence(duration:0.0)
-      then silence(duration:0.0)|{DurationChangeChord T NewTime}
+      then silence(duration:0.0)|{DurationChangeChord T NewTimeFactor}
       end
    []nil then nil
    end
 end
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TEST
 declare
 L = [note(name:a octave:7 sharp:false duration:1.0 instrument:none) note(name:b octave:2 sharp:false duration:2.0 instrument:none) note(name:a octave:5 sharp:true duration:5.0 instrument:none)]
@@ -53,30 +53,33 @@ NewChord = {DurationChangeChord L 4.0 2.0}
 {Browse NewChord}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% TEST de la fonction principale DurationChange
+% 3. fonction principale DurationChange
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 declare
 fun{DurationChange NewTime Part}
    local FlatPart in                        % Toutes les transformations doivent renvoyer une <flat partition>
-      FlatPart = {FlatPartition Part}      
-
-      local Time in
+      FlatPart = {FlatPartition Part}
+      local Time in                            % duree de la partition
 	 Time = {Duration FlatPart}
+	 local NewTimeF in                      % facteur par lequel il faut multiplier tout duration
+	    NewTimeF = (NewTime/Time)
 
-	 local fun{DurationChange1 NewTime Time FlatPart}
-		  case FlatPart of H|T
-		  then 
-		     case H of note(name:N octave:O sharp:S duration:D instrument:I)
-		     then note(name:N octave:O sharp:S duration:((NewTime div Time)*D) instrument:I)|{DurationChange1 NewTime Time T}
-		     else {DurationChangeChord H NewTime Time}|{DurationChange1 NewTime Time T}
+	    local fun{DurationChange1 NewTimeF FlatPart}
+		     case FlatPart of H|T
+		     then
+			case H of note(name:N octave:O sharp:S duration:D instrument:I)
+			then note(name:N octave:O sharp:S duration:(NewTimeF*D) instrument:I)|{DurationChange1 NewTimeF T}
+			[]silence(duration:0.0)
+			then silence(duration:0.0)|{DurationChange1 NewTimeF T}
+			else {DurationChangeChord H NewTimeF}|{DurationChange1 NewTimeF T}
+			end
+		     else nil
 		     end
-
-		  else nil
 		  end
-	       end
-	 in
-	    {DurationChange1 NewTime Time FlatPart}
+	    in
+	       {DurationChange1 NewTimeF FlatPart}
+	    end
 	 end
       end
    end
