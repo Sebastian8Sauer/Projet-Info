@@ -137,22 +137,25 @@ fun{DurationChange NewTime Part}
    local FlatPart in                        % Toutes les transformations doivent renvoyer une <flat partition>
       FlatPart = {FlatPartition Part}      
 
-      local Time in
-	 Time = {Duration FlatPart}
+      local Time in                            % duree de la partition
+	 Time = {Duration FlatPart}        
+	 
+	 local NewTimeF in                      % facteur par lequel il faut multiplier tout duration
+	    NewTimeF = (NewTime div Time)
 
-	 local fun{DurationChange1 NewTime Time FlatPart}
+	 local fun{DurationChange1 NewTimeF FlatPart}
 		  case FlatPart of H|T
 		  then 
 		     case H of note(name:N octave:O sharp:S duration:D instrument:I)
-		     then note(name:N octave:O sharp:S duration:((NewTime div Time)*D) instrument:I)|{DurationChange1 NewTime Time T}
-		     else {DurationChangeChord H NewTime Time}|{DurationChange1 NewTime Time T}
+		     then note(name:N octave:O sharp:S duration:((NewTimeF*D) instrument:I)|{DurationChange1 NewTimeF T}
+		     else {DurationChangeChord H NewTimeF}|{DurationChange1 NewTimeF T}
 		     end
 
 		  else nil
 		  end
 	       end
 	 in
-	    {DurationChange1 NewTime Time FlatPart}
+	    {DurationChange1 NewTimeF FlatPart}
 	 end
       end
    end
