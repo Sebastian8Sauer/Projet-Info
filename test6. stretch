@@ -10,7 +10,12 @@ fun{Stretch Factor Partition}
 end
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TEST of duration
+
+
+
+% ca fonctionne
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+TEST 
 
 declare N1 N2 N3 N4 N5 in
 N1 = a
