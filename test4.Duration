@@ -53,7 +53,25 @@ NewChord = {DurationChangeChord L 4.0}
 {Browse NewChord}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% 3. fonction principale DurationChange
+% 3 DurationChangeFactor
+
+fun{DurationChangeFactor NewTimeF FlatPart}
+	case FlatPart of H|T
+	then
+		case H of note(name:N octave:O sharp:S duration:D instrument:I)
+		then note(name:N octave:O sharp:S duration:(NewTimeF*D) instrument:I)|{DurationChange1 NewTimeF T}
+		[]silence(duration:0.0)
+		then silence(duration:0.0)|{DurationChange1 NewTimeF T}
+		else {DurationChangeChord H NewTimeF}|{DurationChange1 NewTimeF T}
+		end
+	else nil
+	end	  
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 4. fonction principale DurationChange
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 declare
@@ -65,21 +83,9 @@ fun{DurationChange NewTime Part}
 	 local NewTimeF in                      % facteur par lequel il faut multiplier tout duration
 	    NewTimeF = (NewTime/Time)
 
-	    local fun{DurationChange1 NewTimeF FlatPart}
-		     case FlatPart of H|T
-		     then
-			case H of note(name:N octave:O sharp:S duration:D instrument:I)
-			then note(name:N octave:O sharp:S duration:(NewTimeF*D) instrument:I)|{DurationChange1 NewTimeF T}
-			[]silence(duration:0.0)
-			then silence(duration:0.0)|{DurationChange1 NewTimeF T}
-			else {DurationChangeChord H NewTimeF}|{DurationChange1 NewTimeF T}
-			end
-		     else nil
-		     end
-		  end
-	    in
-	       {DurationChange1 NewTimeF FlatPart}
-	    end
+            {DurationChangeFactor NewTimeF FlatPart}
+	    
+	   
 	 end
       end
    end
