@@ -99,7 +99,7 @@ fun{IsTransformation PartItem}
    then true
    []stretch(factor:X Y)
    then true
-   []drone(note:X Y)
+   []drone(note:X amount:Y)
    then true
    []transpose(semitones:X Y)
    then true
