@@ -121,7 +121,8 @@ end
 % Il nous faut :
 % 1. la duree totale de la partition Part
 % 2. pouvoir changer la duree de chaque note et accord
-% 3. mettre ensemble 1 et 2 dans une fonction principale 
+% 3. mettre ensemble 1 et 2 dans une fonction intermediaire qui etire une partition 
+% 4. fonction principale
 
 %% IMPORTANT
 % dans la partition Part, sur laquelle on execute la transformation, 
@@ -173,7 +174,26 @@ fun{DurationChangeChord Chord NewTimeFactor}
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 3. fixe la duree de la partition Part au nombre de secondes NewTime
+% 3. etire la duree de la partition FlatPart par le facteur NewTimeF
+% La partition doit etre flat
+
+fun{DurationChangeFactor NewTimeF FlatPart}
+	case FlatPart of H|T
+	then
+		case H of note(name:N octave:O sharp:S duration:D instrument:I)
+		then note(name:N octave:O sharp:S duration:(NewTimeF*D) instrument:I)|{DurationChangeFactor NewTimeF T}
+		[]silence(duration:0.0)
+		then silence(duration:0.0)|{DurationChangeFactor NewTimeF T}
+		else {DurationChangeChord H NewTimeF}|{DurationChangeFactor NewTimeF T}
+		end
+	else nil
+	end	  
+end
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 4. fixe la duree de la partition Part au nombre de secondes NewTime
 % NewTime = FLOAT
 
 declare
@@ -185,21 +205,8 @@ fun{DurationChange NewTime Part}
 	 local NewTimeF in                      % facteur par lequel il faut multiplier tout duration
 	    NewTimeF = (NewTime/Time)
 
-	    local fun{DurationChange1 NewTimeF FlatPart}
-		     case FlatPart of H|T
-		     then
-			case H of note(name:N octave:O sharp:S duration:D instrument:I)
-			then note(name:N octave:O sharp:S duration:(NewTimeF*D) instrument:I)|{DurationChange1 NewTimeF T}
-			[]silence(duration:0.0)
-			then silence(duration:0.0)|{DurationChange1 NewTimeF T}
-			else {DurationChangeChord H NewTimeF}|{DurationChange1 NewTimeF T}
-			end
-		     else nil
-		     end
-		  end
-	    in
-	       {DurationChange1 NewTimeF FlatPart}
-	    end
+	    {DurationChangeFactor NewTimeF FlatPart}
+
 	 end
       end
    end
