@@ -49,7 +49,7 @@ end
 declare
 L = [note(name:a octave:7 sharp:false duration:1.0 instrument:none) note(name:b octave:2 sharp:false duration:2.0 instrument:none) note(name:a octave:5 sharp:true duration:5.0 instrument:none)]
 declare
-NewChord = {DurationChangeChord L 4.0 2.0}
+NewChord = {DurationChangeChord L 4.0}
 {Browse NewChord}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
