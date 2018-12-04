@@ -156,6 +156,7 @@ fun{Duration FlatPart}
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
 % 2. change la duree d'un extended chord Chord
+% ATTENTION NewTimeFactor doit etre FLOAT 
 
 declare
 fun{DurationChangeChord Chord NewTimeFactor}
