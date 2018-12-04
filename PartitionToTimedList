@@ -135,6 +135,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 1. calcule la duree totale de la partition FlatPart
 % en additionant la duree de chaque note et chaque accord
+% renvoie le FLOAT Acc
 % (RAPPEL : la partition doit etre FLAT)
 
 declare
