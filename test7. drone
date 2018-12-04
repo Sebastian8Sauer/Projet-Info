@@ -1,0 +1,24 @@
+declare
+fun{Drone Sound Amount}
+
+   local S in
+      if {IsList Sound}
+      then S = {ChordToExtended Sound}
+      else S = {NoteToExtended Sound}
+      end
+      local fun{Duplicate S Amount}
+	       if (Amount==0) then nil
+	       else S|{Duplicate S (Amount-1)}
+	       end
+	    end
+      in
+	 {Duplicate S Amount}
+      end
+   end
+end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+declare
+L = [a b c5 silence]
+
+{Browse {Drone L 4}}
