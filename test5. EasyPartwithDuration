@@ -1,0 +1,21 @@
+declare N1 N2 N3 N4 N5 in
+N1 = a
+N2 = d#3
+N3 = silence
+N4 = silence(duration:0.0)
+N5 = note(name:c octave:7 sharp:false duration:3.1 instrument:none)
+
+declare C1 C2 in
+C1 = [b2 b3 b4]
+C2 = [note(name:e octave:1 sharp:false duration:2.0 instrument:none)note(name:g octave:6 sharp:false duration:2.0 instrument:none)]
+
+declare
+P = [a1 a2 N5]
+
+declare
+T1 = duration(seconds:10.0 P)
+
+declare
+Part = [N1 N2 N3 N4 N5 C1 C2 T1]
+
+{Browse {FlatPartition Part}}
