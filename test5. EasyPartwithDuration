@@ -1,32 +1,43 @@
 declare
 fun {FlatPartition Partition}
-   
-   % AVEC LA FONCTION DURATION CHANGE ICI LOCALEMENT
-   % OU SINON CA NE MARCHE PAS 
-   
-   case Partition of H|T 
-   then
-      if {IsList H}
-      then
-	 if{IsExtendedChord H}
-	 then H|{FlatPartition T}
-	 else {ChordToExtended H}|{FlatPartition T}
-	 end
+   local
+      fun{DurationChange NewTime Part}
+	 local FlatPart in                        % Toutes les transformations doivent renvoyer une <flat partition>
+	    FlatPart = {FlatPartition Part}
+	    local Time in                            % duree de la partition
+	       Time = {Duration FlatPart}
+	       local NewTimeF in                      % facteur par lequel il faut multiplier tout duration
+		  NewTimeF = (NewTime/Time)
 
-      elseif {IsNote H}
-      then {NoteToExtended H}|{FlatPartition T}
-      
-      elseif {IsExtendedNote H}
-      then H|{FlatPartition T}
-
-      else
-	 case H of duration(seconds:X Part)
-	 then {DurationChange X Part}|{FlatPartition T}
-	 else false
+		  {DurationChangeFactor NewTimeF FlatPart}
+	       end
+	    end
 	 end
       end
-   []nil then nil
-   else false
+   in
+      case Partition of H|T
+      then
+	 if {IsList H}
+	 then
+	    if{IsExtendedChord H}
+	    then H|{FlatPartition T}
+	    else {ChordToExtended H}|{FlatPartition T}
+	    end
+	 elseif {IsNote H}
+         then {NoteToExtended H}|{FlatPartition T}
+      
+	 elseif {IsExtendedNote H}
+	 then H|{FlatPartition T}
+
+	 else
+	    case H of duration(seconds:X Part)
+	    then {DurationChange X Part}|{FlatPartition T}
+	    else false
+	    end
+	 end
+      []nil then nil
+      else false
+      end
    end
 end
 
