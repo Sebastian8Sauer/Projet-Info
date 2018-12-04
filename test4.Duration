@@ -59,10 +59,10 @@ fun{DurationChangeFactor NewTimeF FlatPart}
 	case FlatPart of H|T
 	then
 		case H of note(name:N octave:O sharp:S duration:D instrument:I)
-		then note(name:N octave:O sharp:S duration:(NewTimeF*D) instrument:I)|{DurationChange1 NewTimeF T}
+		then note(name:N octave:O sharp:S duration:(NewTimeF*D) instrument:I)|{DurationChangeFactor NewTimeF T}
 		[]silence(duration:0.0)
-		then silence(duration:0.0)|{DurationChange1 NewTimeF T}
-		else {DurationChangeChord H NewTimeF}|{DurationChange1 NewTimeF T}
+		then silence(duration:0.0)|{DurationChangeFactor NewTimeF T}
+		else {DurationChangeChord H NewTimeF}|{DurationChangeFactor NewTimeF T}
 		end
 	else nil
 	end	  
