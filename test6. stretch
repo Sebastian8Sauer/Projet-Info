@@ -1,0 +1,12 @@
+declare
+fun{Stretch Factor Partition}
+
+local Time NewTime in
+Time = {Duration Partition}                   %% etape normalement non necessaire, on devrait juste multiplier chaque note et chord par factor
+NewTime = Factor * Time                       %% faire attention aux float
+
+{DurationChange NewTime Partition}
+
+end
+end
+end
