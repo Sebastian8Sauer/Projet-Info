@@ -85,3 +85,12 @@ fun{DurationChange NewTime Part}
    end
 end
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TEST
+declare
+L = [note(name:a octave:7 sharp:false duration:3.0 instrument:none) note(name:b octave:2 sharp:false duration:2.0 instrument:none) note(name:a octave:5 sharp:true duration:5.0 instrument:none) [note(name:a octave:7 sharp:false duration:1.0 instrument:none) note(name:c octave:7 sharp:false duration:1.0 instrument:none)]]
+
+declare
+L2 = {DurationChange 11.0 L}
+
+{Browse L2}
+
