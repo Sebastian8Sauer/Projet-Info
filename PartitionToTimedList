@@ -6,11 +6,12 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % PARTIE 1 : Extend des notes et chords
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% extend une note
+% Extend une note
 
 declare
 fun {NoteToExtended Note}
@@ -47,11 +48,11 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % PARTIE 2 : check le type de <partition item>
-% on sait quoi faire en fonction du type 
+% On sait quoi faire en fonction du type 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% check si <partition item> est un extended note
+% Check si <partition item> est un extended note
 
 declare
 fun{IsExtendedNote PartItem}
@@ -63,9 +64,8 @@ fun{IsExtendedNote PartItem}
    end
 end
      
-     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
-% check si <partition item> est un extended chord
+% Check si <partition item> est un extended chord
 
 declare
 fun{IsExtendedChord PartItem}
@@ -76,10 +76,9 @@ fun{IsExtendedChord PartItem}
    else false                                      %si c'est pas une liste
    end
 end
-     
-     
+  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% check si <partition item> est un note
+% Check si <partition item> est un note
 
 declare
 fun{IsNote PartItem}
@@ -89,9 +88,8 @@ fun{IsNote PartItem}
    else {IsAtom PartItem}
    end
    
-end   
-   
-   
+end  
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
 % INUTILE normalement
 declare
@@ -108,19 +106,36 @@ fun{IsTransformation PartItem}
    else false
    end
 end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % PARTIE 3 : 
-% la transformation : duration(seconds:S Part)
+% La transformation : duration(seconds:S Part)
 
-% ce record souhaite executer duration sur la partition Part
-% cette rtansformation fixe la duree de la partition au nombre de secondes S
+% Ce record souhaite executer duration sur la partition Part
+% Cette tansformation fixe la duree de la partition au nombre de secondes S
 % Il faut donc adapter la duree de chaque note et accord proportionnellement a leur
 % duree actuelle pour que la duree totale devienne celle indiquee dans la transformation
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% La partition doit etre FLAT
+% Il nous faut :
+% 1. la duree totale de la partition Part
+% 2. pouvoir changer la duree de chaque note et accord
+% 3. mettre ensemble 1 et 2 dans une fonction principale 
+
+%% IMPORTANT
+% dans la partition Part, sur laquelle on execute la transformation, 
+% il est possible que cette partition contienne elle meme une transformation
+% il faut donc d'abord gerer la transformation interne avant d'appliquer la
+% transformation souhaitee
+% on considere donc que toutes les partitions sont des flat partition
+% afin de les gerer plus facilement
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 1. calcule la duree totale de la partition FlatPart
+% en additionant la duree de chaque note et chaque accord
+% (RAPPEL : la partition doit etre FLAT)
 
 declare
 fun{Duration FlatPart}
@@ -139,6 +154,7 @@ fun{Duration FlatPart}
    end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+% 2. change la duree d'un extended chord Chord
 
 declare
 fun{DurationChangeChord Chord NewTimeFactor}
@@ -154,8 +170,8 @@ fun{DurationChangeChord Chord NewTimeFactor}
    end
 end
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 3. fixe la duree de la partition Part au nombre de secondes NewTime
 
 declare
 fun{DurationChange NewTime Part}
