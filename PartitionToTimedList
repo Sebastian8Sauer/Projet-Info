@@ -290,7 +290,7 @@ fun {FlatPartition Partition}
 
       else
 	 case H of duration(seconds:X Part)
-	 then {DurationChange X Part}|{FlatPartition T}
+	 then {Append {DurationChange X Part} {FlatPartition T}}
 	 else false
 	 end
       end
