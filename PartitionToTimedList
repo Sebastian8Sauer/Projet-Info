@@ -10,7 +10,7 @@
 % PARTIE 1 : Extend des notes et chords
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   OK
 % Extend une note
 
 declare
@@ -33,7 +33,7 @@ fun {NoteToExtended Note}
       end
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  OK
 % Extend un chord
 
 declare
@@ -51,20 +51,20 @@ end
 % On sait quoi faire en fonction du type 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   OK
 % Check si <partition item> est un extended note
 
 declare
 fun{IsExtendedNote PartItem}
    case PartItem of note(name:V octave:W sharp:X duration:Y instrument:Z)
    then true
-   []silence(duration:0.0)
+   []silence(duration:D)
    then true
    else false
    end
 end
      
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   OK
 % Check si <partition item> est un extended chord
 
 declare
@@ -77,7 +77,7 @@ fun{IsExtendedChord PartItem}
    end
 end
   
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   OK
 % Check si <partition item> est un note
 
 declare
@@ -133,7 +133,7 @@ end
 % afin de les gerer plus facilement
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   OK
 % 1. calcule la duree totale de la partition FlatPart
 % en additionant la duree de chaque note et chaque accord
 % renvoie le FLOAT Acc
@@ -155,7 +155,7 @@ fun{Duration FlatPart}
       {Duration1 FlatPart 0.0}
    end
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   OK verifier   
 % 2. change la duree d'un extended chord Chord
 % ATTENTION NewTimeFactor doit etre FLOAT 
 
@@ -166,8 +166,8 @@ fun{DurationChangeChord Chord NewTimeFactor}
    then
       case H of note(name:N octave:O sharp:S duration:D instrument:I)
       then note(name:N octave:O sharp:S duration:(NewTimeFactor*D) instrument:I)|{DurationChangeChord T NewTimeFactor}
-      []silence(duration:0.0)
-      then silence(duration:0.0)|{DurationChangeChord T NewTimeFactor}
+      []silence(duration:D)
+      then silence(duration:(NewTimeFactor*D))|{DurationChangeChord T NewTimeFactor}
       end
    []nil then nil
    end
@@ -182,8 +182,8 @@ fun{DurationChangeFactor NewTimeF FlatPart}
 	then
 		case H of note(name:N octave:O sharp:S duration:D instrument:I)
 		then note(name:N octave:O sharp:S duration:(NewTimeF*D) instrument:I)|{DurationChangeFactor NewTimeF T}
-		[]silence(duration:0.0)
-		then silence(duration:0.0)|{DurationChangeFactor NewTimeF T}
+		[]silence(duration:D)
+		then silence(duration:(NewTimeF*D))|{DurationChangeFactor NewTimeF T}
 		else {DurationChangeChord H NewTimeF}|{DurationChangeFactor NewTimeF T}
 		end
 	else nil
@@ -390,8 +390,8 @@ end
 declare
 fun{ChangeNote X Note}
 % on considere que Note est extended
-   case Note of silence(duration:0.0)
-   then silence(duration:0.0)
+   case Note of silence(duration:D)
+   then silence(duration:D)
    else
       local NoteInt in
 	 NoteInt = {NoteToInt Note}
