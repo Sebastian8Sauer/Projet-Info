@@ -133,8 +133,14 @@ fun{ChangeNote X Note}
 end
 
 
-   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TEST TEST
 
+declare
+Note = note(name:c octave:2 sharp:false duration:1.0 instrument:none)
+declare
+NoteTrans = {ChangeNote 15  Note}
+
+{Browse NoteTrans}
 
 
 
