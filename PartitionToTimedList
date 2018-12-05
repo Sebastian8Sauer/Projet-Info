@@ -289,7 +289,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-1. N est extended note et on veut l'attribuer a un chiffre entre 1 et 12
+% 1. N est extended note et on veut l'attribuer a un chiffre entre 1 et 12
 %%%%ATTENTION on ne tient pas compte de l'octave
 
 declare
@@ -323,9 +323,9 @@ fun{NoteToInt N}
    end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-1. il existe une autre maniere avec moins de code mais plus de travail pour l ordinateur
-declare
-fun{NoteToInt N}
+% 1. il existe une autre maniere avec moins de code mais plus de travail pour l ordinateur
+% declare
+% fun{NoteToInt N}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 2. on traduit le int en un extended note 
@@ -411,6 +411,15 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 5.
+
+declare
+fun{Transpose X Part}
+
+   local FlatPart in
+   FlatPart = {FlatPartition Part}
+   
+   
+      
 
 
 
