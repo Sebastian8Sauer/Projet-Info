@@ -476,6 +476,12 @@ fun {FlatPartition Partition}
       else
 	 case H of duration(seconds:X Part)
 	 then {Append {DurationChange X Part} {FlatPartition T}}
+	 []stretch(factor:Factor Part)
+	 then {Append {Stretch Factor Part} {FlatPartition T}}
+	 []drone(note:Sound amount:Amount)
+	 then {Append {Drone Sound Amount} {FlatPartition T}}
+	 []transpose(semitones:X Part)
+	 then {Append {Transpose X Part} {FlatPartition T}}
 	 else false
 	 end
       end
