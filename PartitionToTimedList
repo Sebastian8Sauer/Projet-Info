@@ -329,7 +329,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 2. on traduit le int en un extended note 
-%%% ATTENTION on ne fais pas guaffe a l'octave, il faut le changer par apres
+%%% ATTENTION on ne fais pas guaffe a l'octave, il faut le changer par apres ET AUSSI la duration est mise a 1.0
 
 declare
 fun{IntToNote I}
@@ -400,7 +400,7 @@ fun{ChangeNote X Note}
 	    NewNote = {IntToNote Result.int}
 
 	    case NewNote of note(name:N octave:O sharp:S duration:D instrument:I)
-	    then note(name:N octave:(Note.octave + Result.octave) sharp:S duration:D instrument:I)
+	    then note(name:N octave:(Note.octave + Result.octave) sharp:S duration:(Note.duration) instrument:I)
 	    else false
 	    end
 	 end
