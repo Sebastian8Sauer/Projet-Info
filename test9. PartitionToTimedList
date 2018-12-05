@@ -106,3 +106,12 @@ fun {FlatPartition Partition}
       end
    end
 end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+declare
+L = [a2 silence duration(seconds:5.0 [c3 c4 c5 transpose(semitones:12 [c#6 c#7])]) f#2 note(name:a octave:3 sharp:true duration:15.0 instrument:none)]
+
+declare
+FlatL = {FlatPartition L}
+
+{Browse FlatL}
