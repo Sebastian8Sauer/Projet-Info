@@ -14,7 +14,9 @@ de cette facon on sait facilement utiliser le nombre donne en argument: X
 2. l'inverse donc un chiffre --> note
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-1. 
+1. N est extended note et on veut l'attribuer a un chiffre entre 1 et 12
+%%%%ATTENTION on ne tient pas compte de l'octave
+
 declare
 fun{NoteToInt N}
    case N.name of c then
@@ -51,7 +53,9 @@ declare
 fun{NoteToInt N}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-2.
+% 2. on traduit le int en un extended note 
+%%% ATTENTION on ne fais pas guaffe a l'octave, il faut le changer par apres
+
 declare
 fun{IntToNote I}
 
@@ -65,6 +69,64 @@ fun{IntToNote I}
       end
    end
 end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 3. a function that changes the integer representing the note to the correct one
+%    while returning also the correct octave change
+
+declare
+fun{ChangeInt X NoteInt}
+   local Result1 Result2 in
+      if (X >= 0)
+      then Result1 = NoteInt + X
+	 local fun{CorrectResultP Result Acc}
+		  if (Result > 12)
+		  then {CorrectResultP (Result-12) (Acc+1)}
+		  else result(int:Result octave:Acc)
+		  end
+	       end
+	 in
+	    Result2 = {CorrectResultP Result1 0}
+	 end
+	 Result2
+
+      else
+	 Result1 = NoteInt + X
+	 local fun{CorrectResultN Result Acc}
+		  if (Result =< 0)
+		  then {CorrectResultN (Result+12) (Acc-1)}
+		  else result(int:Result octave:Acc)
+		  end
+	       end
+	 in
+	    Result2 = {CorrectResultN Result1 0}
+	 end
+	 Result2
+      end
+   end
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+         
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
