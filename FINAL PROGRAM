@@ -280,11 +280,13 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% PARTIE 6 : transpose(  )
+% PARTIE 6 : transpose(semitones:<integer> Part)
 
+% Procedure de creation pour
+% fun{Transpose X Part}
+% Transposer une partition de X demi-tons vers le heut ou vers le bas
 % fun{Transpose X ExtNote}
-
-% on veut transposer un extended note de plusieurs semi-tons
+% Transposer un extended note de plusieurs semi-tons
 
 % on va associer chaque note a un chiffre
 % L = [c c# d d# e f f# g g# a a# b]
@@ -297,7 +299,8 @@ end
 % 2. l'inverse donc un chiffre --> note
 % 3. on change une note sous forme de int
 % 4. on change une note sous forme extended note
-% 5. on mets tout ensemble !!!
+% Ensuite
+% 5. on mets tout ensemble dans la fonction fun{Transpose X Part}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
