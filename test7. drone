@@ -1,20 +1,27 @@
 declare
 fun{Drone Sound Amount}
 
-   local S in
-      if {IsList Sound}
-      then S = {ChordToExtended Sound}
-      else S = {NoteToExtended Sound}
-      end
-      local fun{Duplicate S Amount}
-	       if (Amount==0) then nil
-	       else S|{Duplicate S (Amount-1)}
+      local S in
+	 if {IsList Sound}
+	 then if (Sound == nil)
+	      then S = silence(duration:0.0)
+	      elseif{IsExtendedChord Sound}
+	      then S = Sound
+	      else S = {ChordToExtended Sound}
+	      end
+	 elseif {IsExtendedNote Sound}
+	 then S = Sound
+	 else S = {NoteToExtended Sound}
+	 end
+	 local fun{Duplicate S Amount}
+		  if (Amount==0) then nil
+		  else S|{Duplicate S (Amount-1)}
+		  end
 	       end
-	    end
-      in
-	 {Duplicate S Amount}
+	 in
+	    {Duplicate S Amount}
+	 end
       end
-   end
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
