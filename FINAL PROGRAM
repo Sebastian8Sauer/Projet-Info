@@ -1,8 +1,8 @@
 local
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    % See project statement for API details.
-   [Project] = {Link ['Project2018.ozf']}
-   Time = {Link ['x-oz://boot/Time']}.1.getReferenceTime
+   %[Project] = {Link ['Project2018.ozf']}
+   %Time = {Link ['x-oz://boot/Time']}.1.getReferenceTime
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,7 +135,6 @@ local
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   OK verifier   
 % 2. change la duree d'un extended chord Chord
-% ATTENTION Chord = extended chord
 % ATTENTION NewTimeFactor doit etre FLOAT 
 
    fun{DurationChangeChord Chord NewTimeFactor}
@@ -185,19 +184,13 @@ local
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % On doit inserer ceci dans P2T
-% cette fonction utilise PartitionToTimedList donc elle doit se trouver a l'interieur de celui ci
-   
+
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % PARTIE 5 : 
 % La transformation : drone(note:<note or chord> amount:<natural>)
-
-% ATTENTION : drone est la seule transformation qui ne s'applique pas sur une partition
-% On doit donc faire attention aux 2 choses suivantes :
-% 1. elle n'utilise pas P2T mais doit tjrs renvoyer une flat partition
-% 2. le cas des accords vides (nil) doit donc etre gerer dans la fonction
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -207,8 +200,8 @@ local
 
       local S in
 	 if {IsList Sound}
-	 then if (Sound==nil)
-	      then S = silence(duration:0.0) 
+	 then if (Sound == nil)
+	      then S = silence(duration:0.0)
 	      elseif{IsExtendedChord Sound}
 	      then S = Sound
 	      else S = {ChordToExtended Sound}
@@ -244,7 +237,7 @@ local
 
 % de cette facon on sait facilement utiliser le nombre donne en argument: X
 
-% 1. on créé une fonction qui convertit une note --> chiffre
+% 1. on cree une fonction qui convertit une note --> chiffre
 % 2. l'inverse donc un chiffre --> note
 % 3. on change une note sous forme de int
 % 4. on change une note sous forme extended note
@@ -370,7 +363,20 @@ local
 
 
 
-  
+
+
+
+
+
+
+
+
+
+
+
+   
+
+   
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % explication GENERALE
@@ -387,60 +393,115 @@ local
    
    fun {PartitionToTimedList Partition}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      local
+	 fun{DurationChange NewTime Part}
+	    local FlatPart in                        % Toutes les transformations doivent renvoyer une <flat partition>
+	       FlatPart = {PartitionToTimedList Part}
+	       local Time in                            % duree de la partition
+		  Time = {Duration FlatPart}
+		  local NewTimeF in                      % facteur par lequel il faut multiplier tout duration
+		     NewTimeF = (NewTime/Time)
+		     {DurationChangeFactor NewTimeF FlatPart}
+		  end
+	       end
+	    end
+	 end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	 fun{Stretch Factor Partition}
+	    local FlatPart in
+	       FlatPart = {PartitionToTimedList Partition}
+
+	       {DurationChangeFactor Factor FlatPart}
+	    end
+	 end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	 fun{Transpose X Part}
+	    local FlatPart in
+	       FlatPart = {PartitionToTimedList Part}
+   
+	       local fun{ChangeChord X Chord}
+			case Chord of H|T
+			then {ChangeNote X H}|{ChangeChord X T}
+			[]nil then nil
+			end
+		     end
+	       in
+		  case FlatPart of H|T 
+		  then
+		     if {IsList H}
+		     then {ChangeChord X H}|{Transpose X T}
+		     else {ChangeNote X H}|{Transpose X T}
+		     end
+		  []nil then nil
+		  end
+	       end
+	    end
+	 end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      in
+	 case Partition of H|T
+	 then
+	    if {IsList H}
+	    then
+	       if (H==nil)
+	       then silence(duration:0.0)|{PartitionToTimedList T}		  
+	       elseif{IsExtendedChord H}
+	       then H|{PartitionToTimedList T}
+	       else {ChordToExtended H}|{PartitionToTimedList T}
+	       end
+
+	    elseif {IsNote H}
+	    then {NoteToExtended H}|{PartitionToTimedList T}
       
-   end
-   
+	    elseif {IsExtendedNote H}
+	    then H|{PartitionToTimedList T}
 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-   
-   fun {Mix P2T Music}
-      % TODO
-      {Project.readFile 'wave/animaux/cow.wav'}
+	    else
+	       case H of duration(seconds:X Part)
+	       then {Append {DurationChange X Part} {PartitionToTimedList T}}
+	       []stretch(factor:Factor Part)
+	       then {Append {Stretch Factor Part} {PartitionToTimedList T}}
+	       []drone(note:Sound amount:Amount)
+	       then {Append {Drone Sound Amount} {PartitionToTimedList T}}
+	       []transpose(semitones:X Part)
+	       then {Append {Transpose X Part} {PartitionToTimedList T}}
+	       else false
+	       end
+	    end
+	 []nil then nil
+	 else false
+	 end
+      end
    end
-
+in
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% corriger ici
+declare
+P2T = PartitionToTimedList
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-   Music = {Project.load 'joy.dj.oz'}
-   Start
+%   Music = {Project.load 'joy.dj.oz'}
+%   Start
 
    % Uncomment next line to insert your tests.
    % \insert 'tests.oz'
    % !!! Remove this before submitting.
-in
-   Start = {Time}
+% in
+%   Start = {Time}
 
    % Uncomment next line to run your tests.
    % {Test Mix PartitionToTimedList}
 
    % Add variables to this list to avoid "local variable used only once"
    % warnings.
-   {ForAll [NoteToExtended Music] Wait}
+%   {ForAll [NoteToExtended Music] Wait}
    
    % Calls your code, prints the result and outputs the result to `out.wav`.
    % You don't need to modify this.
-   {Browse {Project.run Mix PartitionToTimedList Music 'out.wav'}}
+%   {Browse {Project.run Mix PartitionToTimedList Music 'out.wav'}}
    
    % Shows the total time to run your code.
-   {Browse {IntToFloat {Time}-Start} / 1000.0}
-end
+ %  {Browse {IntToFloat {Time}-Start} / 1000.0}
+% end
