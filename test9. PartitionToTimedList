@@ -2,11 +2,11 @@
 
 
 declare
-fun {FlatPartition Partition}
+fun {PartitionToTimedList Partition}
    local
       fun{DurationChange NewTime Part}
 	 local FlatPart in                        % Toutes les transformations doivent renvoyer une <flat partition>
-	    FlatPart = {FlatPartition Part}
+	    FlatPart = {PartitionToTimedList Part}
 	    local Time in                            % duree de la partition
 	       Time = {Duration FlatPart}
 	       local NewTimeF in                      % facteur par lequel il faut multiplier tout duration
@@ -17,43 +17,20 @@ fun {FlatPartition Partition}
 	    end
 	 end
       end
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       fun{Stretch Factor Partition}
    
 	 local FlatPart in
-	    FlatPart = {FlatPartition Partition}
+	    FlatPart = {PartitionToTimedList Partition}
 
 	    {DurationChangeFactor Factor FlatPart}
 	 end
       end
-
-      fun{Drone Sound Amount}
-	 local S in
-	    if {IsList Sound}
-	    then if{IsExtendedChord Sound}
-		 then S = Sound
-		 else S = {ChordToExtended Sound}
-		 end
-	    elseif {IsExtendedNote Sound}
-	    then S = Sound
-	    else S = {NoteToExtended Sound}
-	    end
-	    local fun{Duplicate S Amount}
-		     if (Amount==0) then nil
-		     else S|{Duplicate S (Amount-1)}
-		     end
-		  end
-	    in
-	       {Duplicate S Amount}
-	    end
-	 end
-      end
-
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       fun{Transpose X Part}
 
 	 local FlatPart in
-	    FlatPart = {FlatPartition Part}
+	    FlatPart = {PartitionToTimedList Part}
    
 	    local fun{ChangeChord X Chord}
 		     case Chord of H|T
@@ -73,6 +50,7 @@ fun {FlatPartition Partition}
 	    end
 	 end
       end
+      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    in
       case Partition of H|T 
       then
