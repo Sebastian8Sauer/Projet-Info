@@ -76,6 +76,7 @@ local
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Check si <partition item> est un note
+% EXPLIQUER pourquoi elle est si courte car en dernier
 
    fun{IsNote PartItem}
 
@@ -135,6 +136,7 @@ local
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   OK verifier   
 % 2. change la duree d'un extended chord Chord
+% ATTENTION Chord doit etre un extended chord
 % ATTENTION NewTimeFactor doit etre FLOAT 
 
    fun{DurationChangeChord Chord NewTimeFactor}
@@ -392,9 +394,11 @@ local
 
    
    fun {PartitionToTimedList Partition}
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
       local
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+      % NewTime doit etre un FLOAT
+      
 	 fun{DurationChange NewTime Part}
 	    local FlatPart in                        % Toutes les transformations doivent renvoyer une <flat partition>
 	       FlatPart = {PartitionToTimedList Part}
@@ -446,7 +450,7 @@ local
 	    then
 	       if (H==nil)
 	       then silence(duration:0.0)|{PartitionToTimedList T}		  
-	       elseif{IsExtendedChord H}
+	       elseif {IsExtendedChord H}
 	       then H|{PartitionToTimedList T}
 	       else {ChordToExtended H}|{PartitionToTimedList T}
 	       end
