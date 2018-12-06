@@ -135,6 +135,7 @@ local
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   OK verifier   
 % 2. change la duree d'un extended chord Chord
+% ATTENTION Chord = extended chord
 % ATTENTION NewTimeFactor doit etre FLOAT 
 
    fun{DurationChangeChord Chord NewTimeFactor}
@@ -184,13 +185,19 @@ local
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % On doit inserer ceci dans P2T
-
+% cette fonction utilise PartitionToTimedList donc elle doit se trouver a l'interieur de celui ci
+   
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % PARTIE 5 : 
 % La transformation : drone(note:<note or chord> amount:<natural>)
+
+% ATTENTION : drone est la seule transformation qui ne s'applique pas sur une partition
+% On doit donc faire attention aux 2 choses suivantes :
+% 1. elle n'utilise pas P2T mais doit tjrs renvoyer une flat partition
+% 2. le cas des accords vides (nil) doit donc etre gerer dans la fonction
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -200,7 +207,9 @@ local
 
       local S in
 	 if {IsList Sound}
-	 then if{IsExtendedChord Sound}
+	 then if (Sound==nil)
+	      then S = silence(duration:0.0) 
+	      elseif{IsExtendedChord Sound}
 	      then S = Sound
 	      else S = {ChordToExtended Sound}
 	      end
