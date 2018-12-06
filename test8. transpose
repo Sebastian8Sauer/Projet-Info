@@ -127,7 +127,7 @@ fun{ChangeNote X Note}
 	       NewNote = {IntToNote Result.int}
 
 	       case NewNote of note(name:N octave:O sharp:S duration:D instrument:I)
-	       then note(name:N octave:(Note.octave + Result.octave) sharp:S duration:D instrument:I)
+	       then note(name:N octave:(Note.octave + Result.octave) sharp:S duration:(Note.duration) instrument:I)
 	       end
 	    end
 	 end
