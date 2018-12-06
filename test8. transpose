@@ -111,27 +111,29 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
 declare
 fun{ChangeNote X Note}
 % on considere que Note est extended
-   
-   local NoteInt in
-      NoteInt = {NoteToInt Note}
-      local Result in
-	 Result = {ChangeInt X NoteInt}  % renvoi result(int octave)
+   case Note of silence(duration:D)
+   then silence(duration:D)
+   else
+      local NoteInt in
+	 NoteInt = {NoteToInt Note}
+	 local Result in
+	    Result = {ChangeInt X NoteInt}  % renvoi result(int octave)
 
-	 local NewNote in
-	    NewNote = {IntToNote Result.int}
+	    local NewNote in
+	       NewNote = {IntToNote Result.int}
 
-	    case NewNote of note(name:N octave:O sharp:S duration:D instrument:I)
-	    then note(name:N octave:(Note.octave + Result.octave) sharp:S duration:D instrument:I)
-	    else false
+	       case NewNote of note(name:N octave:O sharp:S duration:D instrument:I)
+	       then note(name:N octave:(Note.octave + Result.octave) sharp:S duration:D instrument:I)
+	       end
 	    end
 	 end
       end
    end
 end
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TEST TEST
 
