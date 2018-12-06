@@ -17,7 +17,7 @@
 % 5. on mets tout ensemble !!!
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-1. N est extended note et on veut l'attribuer a un chiffre entre 1 et 12
+% 1. N est extended note et on veut l'attribuer a un chiffre entre 1 et 12
 %%%%ATTENTION on ne tient pas compte de l'octave
 
 declare
