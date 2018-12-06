@@ -56,26 +56,28 @@ fun {PartitionToTimedList Partition}
       then
 	 if {IsList H}
 	 then
-	    if{IsExtendedChord H}
-	    then H|{FlatPartition T}
-	    else {ChordToExtended H}|{FlatPartition T}
+	    if (H==nil)
+	    then silence(duration:0.0)|{PartitionToTimedList T}
+	    elseif{IsExtendedChord H}
+	    then H|{PartitionToTimedList T}
+	    else {ChordToExtended H}|{PartitionToTimedList T}
 	    end
 
 	 elseif {IsNote H}
-	 then {NoteToExtended H}|{FlatPartition T}
+	 then {NoteToExtended H}|{PartitionToTimedList T}
       
 	 elseif {IsExtendedNote H}
-	 then H|{FlatPartition T}
+	 then H|{PartitionToTimedList T}
 
 	 else
 	    case H of duration(seconds:X Part)
-	    then {Append {DurationChange X Part} {FlatPartition T}}
+	    then {Append {DurationChange X Part} {PartitionToTimedList T}}
 	    []stretch(factor:Factor Part)
-	    then {Append {Stretch Factor Part} {FlatPartition T}}
+	    then {Append {Stretch Factor Part} {PartitionToTimedList T}}
 	    []drone(note:Sound amount:Amount)
-	    then {Append {Drone Sound Amount} {FlatPartition T}}
+	    then {Append {Drone Sound Amount} {PartitionToTimedList T}}
 	    []transpose(semitones:X Part)
-	    then {Append {Transpose X Part} {FlatPartition T}}
+	    then {Append {Transpose X Part} {PartitionToTimedList T}}
 	    else false
 	    end
 	 end
