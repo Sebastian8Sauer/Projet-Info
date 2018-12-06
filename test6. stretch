@@ -2,7 +2,7 @@ declare
 fun{Stretch Factor Partition}
    
    local FlatPart in
-      FlatPart = {FlatPartition Partition}
+      FlatPart = {PartitionToTimedList Partition}
    
       {DurationChangeFactor Factor FlatPart}
    
