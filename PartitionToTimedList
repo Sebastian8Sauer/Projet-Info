@@ -90,23 +90,6 @@ fun{IsNote PartItem}
    
 end  
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-% INUTILE normalement
-declare
-fun{IsTransformation PartItem}
-
-   case PartItem of duration(seconds:X Y)
-   then true
-   []stretch(factor:X Y)
-   then true
-   []drone(note:X amount:Y)
-   then true
-   []transpose(semitones:X Y)
-   then true
-   else false
-   end
-end
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -157,6 +140,7 @@ fun{Duration FlatPart}
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   OK verifier   
 % 2. change la duree d'un extended chord Chord
+% ATTENTION Chord = extended chord
 % ATTENTION NewTimeFactor doit etre FLOAT 
 
 declare
