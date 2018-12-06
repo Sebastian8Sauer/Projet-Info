@@ -5,30 +5,32 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 declare
-fun {FlatPartition Partition}
-   case Partition of H|T 
+fun{PartitionToTimedList Partition}
+
+   case Partition of H|T
    then
       if {IsList H}
       then
-	 if{IsExtendedChord H}
-	 then H|{FlatPartition T}
-	 else {ChordToExtended H}|{FlatPartition T}
+	 if (H==nil)
+	 then silence(duration:0.0)|{PartitionToTimedList T}		  
+	 elseif {IsExtendedChord H}
+	 then H|{PartitionToTimedList T}
+	 else {ChordToExtended H}|{PartitionToTimedList T}
 	 end
 
       elseif {IsNote H}
-      then {NoteToExtended H}|{FlatPartition T}
+      then {NoteToExtended H}|{PartitionToTimedList T}
       
       elseif {IsExtendedNote H}
-      then H|{FlatPartition T}
+      then H|{PartitionToTimedList T}
 
-      else error|{FlatPartition T}
-      
+      else error|{PartitionToTimedList T}
       end
-      
+
    []nil then nil
-   
    end
 end
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % TEST TEST
@@ -38,6 +40,6 @@ declare
 Part = [a b2 c#3 [f5 f6 f7] silence note(name:c octave:6 sharp:true duration:2.0 instrument:none)]
 
 declare
-FlatPart = {FlatPartition Part}
+FlatPart = {PartitionToTimedList Part}
 
 {Browse FlatPart}
