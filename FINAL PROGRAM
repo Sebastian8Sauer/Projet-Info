@@ -277,10 +277,248 @@ end
 % 1. N est extended note et on veut l'attribuer a un chiffre entre 1 et 12
 %%%%ATTENTION on ne tient pas compte de l'octave
 
+declare
+fun{NoteToInt N}
+   case N.name of c then
+      if N.sharp then 2
+      else 1
+      end
+   []d then
+      if N.sharp
+      then 4
+      else 3
+      end
+   []e then 5
+   []f then
+      if N.sharp
+      then 7
+      else 6
+      end
+   []g then
+      if N.sharp
+      then 9
+      else 8
+      end
+   []a then
+      if N.sharp
+      then 11
+      else 10
+      end
+   else 12
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 2. on traduit le int en un extended note 
+%%% ATTENTION on ne fais pas guaffe a l'octave, il faut le changer par apres ET AUSSI la duration est mise a 1.0
+
+declare
+fun{IntToNote I}
+
+   local L in
+   L = [c c#4 d d#4 e f f#4 g g#4 a a#4 b]
+      local ChordNote
+      in ChordNote = {ChordToExtended L}
+
+      {Nth ChordNote I}
+
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 3. a function that changes the integer representing the note to the correct one
+% while returning also the correct octave change
+
+declare
+fun{ChangeInt X NoteInt}
+   local Result1 Result2 in
+      if (X >= 0)
+      then Result1 = NoteInt + X
+	 local fun{CorrectResultP Result Acc}
+		  if (Result > 12)
+		  then {CorrectResultP (Result-12) (Acc+1)}
+		  else result(int:Result octave:Acc)
+		  end
+	       end
+	 in
+	    Result2 = {CorrectResultP Result1 0}
+	 end
+	 Result2
+
+      else
+	 Result1 = NoteInt + X
+	 local fun{CorrectResultN Result Acc}
+		  if (Result =< 0)
+		  then {CorrectResultN (Result+12) (Acc-1)}
+		  else result(int:Result octave:Acc)
+		  end
+	       end
+	 in
+	    Result2 = {CorrectResultN Result1 0}
+	 end
+	 Result2
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 4. 
+% on considere que Note est extended
+
+declare
+fun{ChangeNote X Note}
+% on considere que Note est extended
+   case Note of silence(duration:D)
+   then silence(duration:D)
+   else
+      local NoteInt in
+	 NoteInt = {NoteToInt Note}
+	 local Result in
+	    Result = {ChangeInt X NoteInt}  % renvoi result(int octave)
+	    local NewNote in
+	       NewNote = {IntToNote Result.int}
+	       case NewNote of note(name:N octave:O sharp:S duration:D instrument:I)
+	       then note(name:N octave:(Note.octave + Result.octave) sharp:S duration:(Note.duration) instrument:I)
+	       else false
+	       end
+	    end
+	 end
+      end
+   end
+end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%5.
+% on doit inserer ceci dans P2T
+
+%fun{Transpose X Part}
+%	    local FlatPart in
+%	       FlatPart = {PartitionToTimedList Part}
+%  
+%	       local fun{ChangeChord X Chord}
+%			case Chord of H|T
+%			then {ChangeNote X H}|{ChangeChord X T}
+%			[]nil then nil
+%			end
+%		     end
+%	       in
+%		  case FlatPart of H|T 
+%		  then
+%		     if {IsList H}
+%		     then {ChangeChord X H}|{Transpose X T}
+%		     else {ChangeNote X H}|{Transpose X T}
+%		     end
+%		  []nil then nil
+%		  end
+%	       end
+%	    end
+% end
 
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% explication GENERALE
+%
+%
+%
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+declare
+fun {PartitionToTimedList Partition}
+   local
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      
+      % NewTime doit etre un FLOAT
+
+      fun{DurationChange NewTime Part}
+	 local FlatPart in                        % Toutes les transformations doivent renvoyer une <flat partition>
+	    FlatPart = {PartitionToTimedList Part}
+	    local Time in                            % duree de la partition
+	       Time = {Duration FlatPart}
+	       local NewTimeF in                      % facteur par lequel il faut multiplier tout duration
+		  NewTimeF = (NewTime/Time)
+		  {DurationChangeFactor NewTimeF FlatPart}
+	       end
+	    end
+	 end
+      end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      fun{Stretch Factor Partition}
+	 local FlatPart in
+	    FlatPart = {PartitionToTimedList Partition}
+
+	    {DurationChangeFactor Factor FlatPart}
+	 end
+      end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+      fun{Transpose X Part}
+	 local FlatPart in
+	    FlatPart = {PartitionToTimedList Part}
+   
+	    local fun{ChangeChord X Chord}
+		     case Chord of H|T
+		     then {ChangeNote X H}|{ChangeChord X T}
+		     []nil then nil
+		     end
+		  end
+	    in
+	       case FlatPart of H|T 
+	       then
+		  if {IsList H}
+		  then {ChangeChord X H}|{Transpose X T}
+		  else {ChangeNote X H}|{Transpose X T}
+		  end
+	       []nil then nil
+	       end
+	    end
+	 end
+      end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   in
+
+      case Partition of H|T
+      then
+	 if {IsList H}
+	 then
+	    if (H==nil)
+	    then silence(duration:0.0)|{PartitionToTimedList T}		  
+	    elseif {IsExtendedChord H}
+	    then H|{PartitionToTimedList T}
+	    else {ChordToExtended H}|{PartitionToTimedList T}
+	    end
+
+	 elseif {IsNote H}
+	 then {NoteToExtended H}|{PartitionToTimedList T}
+      
+	 elseif {IsExtendedNote H}
+	 then H|{PartitionToTimedList T}
+
+	 else
+	    case H of duration(seconds:X Part)
+	    then {Append {DurationChange X Part} {PartitionToTimedList T}}
+	    []stretch(factor:Factor Part)
+	    then {Append {Stretch Factor Part} {PartitionToTimedList T}}
+	    []drone(note:Sound amount:Amount)
+	    then {Append {Drone Sound Amount} {PartitionToTimedList T}}
+	    []transpose(semitones:X Part)
+	    then {Append {Transpose X Part} {PartitionToTimedList T}}
+	    else false
+	    end
+	 end
+      []nil then nil
+      else false
+      end
+   end
+end
 
 
 
