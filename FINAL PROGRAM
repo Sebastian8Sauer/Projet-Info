@@ -1,10 +1,24 @@
-% explication GENERALE
+% Explication du contenu
 %
-%
-%
-%
-%
-%
+% ce code contient 2 grandes fonctions :
+% 1. PartitionToTimedList
+% cette fonction permet de transformer une partition musicale en 
+% une liste de notes et d'accords, chacun associe a une duree.
+% 
+% 2. Mix
+% permet de mixer plusieurs formats d'entree (dont les partitions, les 
+% listes de notes/accord chronometres, et des donnees audio brutes)
+% afin d'emetrre un fichier audio WAV.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% 1. PartitionToTimedList
+% contient des sous fonctions divise en 6 parties
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -48,12 +62,11 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% PARTIE 2 : check le type de <partition item>
-% On sait souvent quoi faire en fonction du type 
+% PARTIE 2 : check le type de <partition item> 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Check si <partition item> est un extended note
+% Check si <partition item> est un extended note.
 
 declare
 fun{IsExtendedNote PartItem}
@@ -66,21 +79,20 @@ fun{IsExtendedNote PartItem}
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Check si <partition item> est un extended chord
+% Check si <partition item> est un extended chord.
 
 declare
 fun{IsExtendedChord PartItem}
 
-   case PartItem of H|T then      %check si c'est une liste
-      {IsExtendedNote H}          %check si le 1er element est un extended note
+   case PartItem of H|T then      % check si c'est une liste
+      {IsExtendedNote H}          % check si le 1er element est un extended note
    []nil then true
    else false                                
    end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Check si <partition item> est un note
-% EXPLIQUER pourquoi elle est si courte car en dernier
+% Check si <partition item> est un note.
 
 declare
 fun{IsNote PartItem}
@@ -97,31 +109,33 @@ end
 % PARTIE 3 : 
 % La transformation : duration(seconds:S Part)
 
-% Ce record souhaite executer duration sur la partition Part
-% Cette tansformation fixe la duree de la partition au nombre de secondes S
+% Ce record souhaite executer duration sur la partition Part.
+% Cette tansformation fixe la duree de la partition au nombre de secondes S.
 % Il faut donc adapter la duree de chaque note et accord proportionnellement a leur
-% duree actuelle pour que la duree totale devienne celle indiquee dans la transformation
+% duree actuelle pour que la duree totale devienne celle indiquee dans la transformation, S.
 
 % Il nous faut :
-% 1. la duree totale de la partition Part
-% 2. pouvoir changer la duree de chaque note et accord
-% 3. mettre ensemble 1 et 2 dans une fonction intermediaire qui etire une partition 
-% 4. fonction principale
+% 1. la duree totale de la partition Part.
+% 2. pouvoir changer la duree de chaque note et accord.
+% 3. mettre ensemble 1 et 2 dans une fonction intermediaire qui etire une partition. 
+% 4. mettre ensemble 1,2 et 3 dans une fonction principale.
 
 %% IMPORTANT
-% dans la partition Part, sur laquelle on execute la transformation, 
-% il est possible que cette partition contienne elle meme une transformation
-% il faut donc d'abord gerer la transformation interne avant d'appliquer la
-% transformation souhaitee
-% on considere donc que toutes les partitions sont des flat partition
-% afin de les gerer plus facilement
+% Dans la partition Part, sur laquelle on execute la transformation, 
+% il est possible qu'elle contienne elle meme une transformation.
+% Il faut donc d'abord gerer la transformation interne avant d'appliquer la
+% transformation souhaitee.
+% Pour resoudre cela, chaque fonction s'occupera d'abord de transformer sa partition en flat partition.
+% On peut donc considere que toutes les partitions avec lesquelles les sous fonctions travaillent
+% sont des flat partition.
+% Ceci veut de meme pour les autres transformations.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % 1. calcule la duree totale de la partition FlatPart
-% en additionant la duree de chaque note et chaque accord
+% en additionant la duree de chaque note et chaque accord.
 % renvoie le FLOAT Acc
-% (RAPPEL : la partition doit etre FLAT)
+% Note : la partition doit etre FLAT
 
 declare
 fun{Duration FlatPart}
@@ -140,10 +154,10 @@ fun{Duration FlatPart}
    end
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   OK verifier   
-% 2. change la duree d'un extended chord Chord
-% ATTENTION Chord doit etre un extended chord
-% ATTENTION NewTimeFactor doit etre FLOAT 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
+% 2. Change la duree d'un extended chord Chord.
+% Note : Chord doit etre un extended chord
+% Note : NewTimeFactor doit etre FLOAT 
 
 declare
 fun{DurationChangeChord Chord NewTimeFactor}
@@ -160,8 +174,9 @@ fun{DurationChangeChord Chord NewTimeFactor}
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 3. etire la duree de la partition FlatPart par le facteur NewTimeF
-% La partition doit etre flat
+% 3. Etire la duree de la partition FlatPart par le facteur NewTimeF.
+% Note : La partition doit etre flat
+% Note : NewTimeF doit etre FLOAT
 
 declare
 fun{DurationChangeFactor NewTimeF FlatPart}
@@ -179,10 +194,10 @@ end
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% 4. fixe la duree de la partition Part au nombre de secondes NewTime
-% NewTime = FLOAT
-
 % cette fonction utilise PartitionToTimedList donc elle doit se trouver a l'interieur de celui ci
+
+% 4. Fixe la duree de la partition Part au nombre de secondes NewTime.
+% Note : NewTime = FLOAT
 
 %fun{DurationChange NewTime Part}
 %	    local FlatPart in                        % Toutes les transformations doivent renvoyer une <flat partition>
