@@ -128,7 +128,7 @@ end
 % Pour resoudre cela, chaque fonction s'occupera d'abord de transformer sa partition en flat partition.
 % On peut donc considere que toutes les partitions avec lesquelles les sous fonctions travaillent
 % sont des flat partition.
-% Ceci veut de meme pour les autres transformations.
+% Ceci vaut de meme pour les autres transformations.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
@@ -195,6 +195,7 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % cette fonction utilise PartitionToTimedList donc elle doit se trouver a l'interieur de celui ci
+% declarer localement
 
 % 4. Fixe la duree de la partition Part au nombre de secondes NewTime.
 % Note : NewTime = FLOAT
@@ -217,10 +218,14 @@ end
    
 % PARTIE 4 : 
 % La transformation : stretch(factor:F Part)
+
+% Etire la duree de partition par le facteur F 
+% On va donc utiliser DurationChangeFactor
    
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% On doit inserer ceci dans P2T
+% cette fonction utilise PartitionToTimedList donc elle doit se trouver a l'interieur de celui ci
+% declarer localement
 
 %fun{Stretch Factor Partition}
 %	    local FlatPart in
@@ -236,8 +241,15 @@ end
 % PARTIE 5 : 
 % La transformation : drone(note:<note or chord> amount:<natural>)
 
+% Repeter le note/chord autant de fois que indiquee par amount 
+% Drone est la seule transformation qui ne contient pas de partition a transformer mais
+% un element de partition (peut contenir tous les elements sauf une autre transformation)
+% Drone doit toujours renvoyer une flat partition mais cette fois ci sans l'aide de PartitionToTimedList
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Repeter le Sound autant de fois que indiquee par Amount 
+% Renvoie une flat partition 
 
 declare
 fun{Drone Sound Amount}
