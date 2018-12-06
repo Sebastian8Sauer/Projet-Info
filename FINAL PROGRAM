@@ -1,0 +1,432 @@
+local
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   % See project statement for API details.
+   [Project] = {Link ['Project2018.ozf']}
+   Time = {Link ['x-oz://boot/Time']}.1.getReferenceTime
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% PARTIE 1 : Extend des notes et chords
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Extend un note.
+
+   fun {NoteToExtended Note}
+      case Note
+      of Name#Octave then
+         note(name:Name octave:Octave sharp:true duration:1.0 instrument:none)
+      [] Atom then
+         case {AtomToString Atom}
+         of [_] then
+            note(name:Atom octave:4 sharp:false duration:1.0 instrument:none)
+         [] [N O] then
+            note(name:{StringToAtom [N]}
+                 octave:{StringToInt [O]}
+                 sharp:false
+                 duration:1.0
+                 instrument: none)
+	 else silence(duration : 1.0)
+	 end
+      end
+   end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Extend un chord
+
+   fun {ChordToExtended Chord}
+      case Chord
+      of nil then nil
+      [] H|T then {NoteToExtended H}|{ChordToExtended T}
+      end
+   end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% PARTIE 2 : check le type de <partition item>
+% On sait souvent quoi faire en fonction du type 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Check si <partition item> est un extended note
+
+   fun{IsExtendedNote PartItem}
+      case PartItem of note(name:V octave:W sharp:X duration:Y instrument:Z)
+      then true
+      []silence(duration:D)
+      then true
+      else false
+      end
+   end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Check si <partition item> est un extended chord
+
+   fun{IsExtendedChord PartItem}
+
+      case PartItem of H|T then                       % check si c'est une liste
+	 {IsExtendedNote H}                           % check si le 1er element = extended note
+      []nil then true
+      else false                                      
+      end
+   end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Check si <partition item> est un note
+
+   fun{IsNote PartItem}
+
+      case PartItem of Name#Octave
+      then true
+      else {IsAtom PartItem}
+      end
+   end 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% PARTIE 3 : 
+% La transformation : duration(seconds:S Part)
+
+% Ce record souhaite executer duration sur la partition Part
+% Cette tansformation fixe la duree de la partition au nombre de secondes S
+% Il faut donc adapter la duree de chaque note et accord proportionnellement a leur
+% duree actuelle pour que la duree totale devienne celle indiquee dans la transformation
+
+% Il nous faut :
+% 1. la duree totale de la partition Part
+% 2. pouvoir changer la duree de chaque note et accord
+% 3. mettre ensemble 1 et 2 dans une fonction intermediaire qui etire une partition 
+% 4. fonction principale
+
+%% IMPORTANT
+% dans la partition Part, sur laquelle on execute la transformation, 
+% il est possible que cette partition contienne elle meme une transformation
+% il faut donc d'abord gerer la transformation interne avant d'appliquer la
+% transformation souhaitee
+% on considere donc que toutes les partitions sont des flat partition
+% afin de les gerer plus facilement
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+% 1. calcule la duree totale de la partition FlatPart
+% en additionant la duree de chaque note et chaque accord
+% renvoie le FLOAT Acc
+% (RAPPEL : la partition doit etre FLAT)
+
+   fun{Duration FlatPart}
+      local fun{Duration1 FlatPart Acc}
+	       case FlatPart of H|T
+	       then
+		  case H of A|B
+		  then {Duration1 T (Acc + A.duration)}
+		  else {Duration1 T (Acc + H.duration)}
+		  end
+	       []nil then Acc
+	       end
+	    end
+      in
+	 {Duration1 FlatPart 0.0}
+      end
+   end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   OK verifier   
+% 2. change la duree d'un extended chord Chord
+% ATTENTION NewTimeFactor doit etre FLOAT 
+
+   fun{DurationChangeChord Chord NewTimeFactor}
+
+      case Chord of H|T
+      then
+	 case H of note(name:N octave:O sharp:S duration:D instrument:I)
+	 then note(name:N octave:O sharp:S duration:(NewTimeFactor*D) instrument:I)|{DurationChangeChord T NewTimeFactor}
+	 []silence(duration:D)
+	 then silence(duration:(NewTimeFactor*D))|{DurationChangeChord T NewTimeFactor}
+	 end
+      []nil then nil
+      end
+   end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 3. etire la duree de la partition FlatPart par le facteur NewTimeF
+% La partition doit etre flat
+   
+   fun{DurationChangeFactor NewTimeF FlatPart}
+      case FlatPart of H|T
+      then
+	 case H of note(name:N octave:O sharp:S duration:D instrument:I)
+	 then note(name:N octave:O sharp:S duration:(NewTimeF*D) instrument:I)|{DurationChangeFactor NewTimeF T}
+	 []silence(duration:D)
+	 then silence(duration:(NewTimeF*D))|{DurationChangeFactor NewTimeF T}
+	 else {DurationChangeChord H NewTimeF}|{DurationChangeFactor NewTimeF T}
+	 end
+      else nil
+      end
+   end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 4. fixe la duree de la partition Part au nombre de secondes NewTime
+% NewTime = FLOAT
+
+% cette fonction utilise PartitionToTimedList donc elle doit se trouver a l'interieur de celui ci
+
+   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+% PARTIE 4 : 
+% La transformation : stretch(factor:F Part)
+   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% On doit inserer ceci dans P2T
+
+   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% PARTIE 5 : 
+% La transformation : drone(note:<note or chord> amount:<natural>)
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+   fun{Drone Sound Amount}
+
+      local S in
+	 if {IsList Sound}
+	 then if{IsExtendedChord Sound}
+	      then S = Sound
+	      else S = {ChordToExtended Sound}
+	      end
+	 elseif {IsExtendedNote Sound}
+	 then S = Sound
+	 else S = {NoteToExtended Sound}
+	 end
+	 local fun{Duplicate S Amount}
+		  if (Amount==0) then nil
+		  else S|{Duplicate S (Amount-1)}
+		  end
+	       end
+	 in
+	    {Duplicate S Amount}
+	 end
+      end
+   end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% PARTIE 6 : transpose(  )
+
+% fun{Transpose X ExtNote}
+
+% on veut transposer un extended note de plusieurs semi-tons
+
+% on va associer chaque note a un chiffre
+% L = [c c# d d# e f f# g g# a a# b]
+% devient
+% L = [1 2 3 4 5 6 7 8 9 10 11 12]
+
+% de cette facon on sait facilement utiliser le nombre donne en argument: X
+
+% 1. on créé une fonction qui convertit une note --> chiffre
+% 2. l'inverse donc un chiffre --> note
+% 3. on change une note sous forme de int
+% 4. on change une note sous forme extended note
+% 5. on mets tout ensemble !!!
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 1. N est extended note et on veut l'attribuer a un chiffre entre 1 et 12
+%%%%ATTENTION on ne tient pas compte de l'octave
+
+   fun{NoteToInt N}
+      case N.name of c then
+	 if N.sharp then 2
+	 else 1
+	 end
+      []d then
+	 if N.sharp
+	 then 4
+	 else 3
+	 end
+      []e then 5
+      []f then
+	 if N.sharp
+	 then 7
+	 else 6
+	 end
+      []g then
+	 if N.sharp
+	 then 9
+	 else 8
+	 end
+      []a then
+	 if N.sharp
+	 then 11
+	 else 10
+	 end
+      else 12
+      end
+   end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 2. on traduit le int en un extended note 
+%%% ATTENTION on ne fais pas guaffe a l'octave, il faut le changer par apres ET AUSSI la duration est mise a 1.0
+
+   fun{IntToNote I}
+
+      local L in
+	 L = [c c#4 d d#4 e f f#4 g g#4 a a#4 b]
+	 local ChordNote
+	 in ChordNote = {ChordToExtended L}
+
+	    {Nth ChordNote I}
+
+	 end
+      end
+   end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% 3. a function that changes the integer representing the note to the correct one
+%    while returning also the correct octave change
+
+   fun{ChangeInt X NoteInt}
+      local Result1 Result2 in
+	 if (X >= 0)
+	 then Result1 = NoteInt + X
+	    local fun{CorrectResultP Result Acc}
+		     if (Result > 12)
+		     then {CorrectResultP (Result-12) (Acc+1)}
+		     else result(int:Result octave:Acc)
+		     end
+		  end
+	    in
+	       Result2 = {CorrectResultP Result1 0}
+	    end
+	    Result2
+
+	 else
+	    Result1 = NoteInt + X
+	    local fun{CorrectResultN Result Acc}
+		     if (Result =< 0)
+		     then {CorrectResultN (Result+12) (Acc-1)}
+		     else result(int:Result octave:Acc)
+		     end
+		  end
+	    in
+	       Result2 = {CorrectResultN Result1 0}
+	    end
+	    Result2
+	 end
+      end
+   end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 4. 
+% on considere que Note est extended
+   fun{ChangeNote X Note}
+      
+      case Note of silence(duration:D)
+      then silence(duration:D)
+      else
+	 local NoteInt in
+	    NoteInt = {NoteToInt Note}
+	    local Result in
+	       Result = {ChangeInt X NoteInt}  % renvoi result(int octave)
+	       local NewNote in
+		  NewNote = {IntToNote Result.int}
+		  case NewNote of note(name:N octave:O sharp:S duration:D instrument:I)
+		  then note(name:N octave:(Note.octave + Result.octave) sharp:S duration:(Note.duration) instrument:I)
+		  else false
+		  end
+	       end
+	    end
+	 end
+      end
+   end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%5.
+% on doit inserer ceci dans P2T
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% explication GENERALE
+%
+%
+%
+%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+   
+   fun {PartitionToTimedList Partition}
+
+      
+   end
+   
+
+   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   
+   fun {Mix P2T Music}
+      % TODO
+      {Project.readFile 'wave/animaux/cow.wav'}
+   end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+   Music = {Project.load 'joy.dj.oz'}
+   Start
+
+   % Uncomment next line to insert your tests.
+   % \insert 'tests.oz'
+   % !!! Remove this before submitting.
+in
+   Start = {Time}
+
+   % Uncomment next line to run your tests.
+   % {Test Mix PartitionToTimedList}
+
+   % Add variables to this list to avoid "local variable used only once"
+   % warnings.
+   {ForAll [NoteToExtended Music] Wait}
+   
+   % Calls your code, prints the result and outputs the result to `out.wav`.
+   % You don't need to modify this.
+   {Browse {Project.run Mix PartitionToTimedList Music 'out.wav'}}
+   
+   % Shows the total time to run your code.
+   {Browse {IntToFloat {Time}-Start} / 1000.0}
+end
