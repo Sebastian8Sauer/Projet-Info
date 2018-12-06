@@ -77,7 +77,7 @@ end
 declare
 fun{DurationChange NewTime Part}
    local FlatPart in                        % Toutes les transformations doivent renvoyer une <flat partition>
-      FlatPart = {FlatPartition Part}
+      FlatPart = {PartitionToTimedList Part}
       local Time in                            % duree de la partition
 	 Time = {Duration FlatPart}
 	 local NewTimeF in                      % facteur par lequel il faut multiplier tout duration
