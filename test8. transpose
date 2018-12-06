@@ -144,7 +144,33 @@ declare
 NoteTrans = {ChangeNote 15  Note}
 
 {Browse NoteTrans}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+declare
+fun{Transpose X Part}
+
+   local FlatPart in
+   FlatPart = {FlatPartition Part}
+   
+      local fun{ChangeChord X Chord}
+            case Chord of H|T
+	    then {ChangeNote X H}|{ChangeChord X T}
+	    []nil then nil
+	    end
+	  end
+	  in
+	  
+	  case FlatPart of H|T 
+	  then
+	     if {IsList H}
+	     then {ChangeChord X H}|{Transpose X T}
+	     else {ChangeNote X H}|{Transpose X T}
+	     end
+	  []nil then nil
+	  end
+          end
+    end
+end
 
 
 
